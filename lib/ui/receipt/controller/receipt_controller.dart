@@ -81,7 +81,12 @@ class ReceiptController extends ChangeNotifier {
     bytes += generator.row([
       PosColumn(text: 'Qty', width: 1),
       PosColumn(text: 'Item', width: 7),
-      PosColumn(text: 'Price', width: 2, styles: const PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: 'Price',
+          width: 2,
+          styles: const PosStyles(
+            align: PosAlign.right,
+          )),
       PosColumn(text: 'Total', width: 2, styles: const PosStyles(align: PosAlign.right)),
     ]);
 

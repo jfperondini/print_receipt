@@ -20,25 +20,25 @@ class _ReceiptPresenterState extends State<ReceiptPresenter> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          Row(
-            children: [
-              ElevatedButton(
-                  onPressed: () async {
-                    final vendaConcluidaController = context.read<ReceiptController>();
+    return Material(
+      child: Center(
+        child: Row(
+          children: [
+            const Text('Agora você já pode imprimir'),
+            ElevatedButton(
+              onPressed: () async {
+                final vendaConcluidaController = context.read<ReceiptController>();
 
-                    // Inicializando a lista de impressoras
-                    await vendaConcluidaController.initPrinters();
+                // Inicializando a lista de impressoras
+                await vendaConcluidaController.initPrinters();
 
-                    // Imprimindo na impressora selecionada
-                    await vendaConcluidaController.printSelectedPrinter();
-                  },
-                  child: const Text('Imprimir')),
-            ],
-          ),
-        ],
+                // Imprimindo na impressora selecionada
+                await vendaConcluidaController.printSelectedPrinter();
+              },
+              child: const Text('Imprimir'),
+            ),
+          ],
+        ),
       ),
     );
   }
