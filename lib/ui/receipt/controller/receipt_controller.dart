@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_esc_pos_utils/flutter_esc_pos_utils.dart';
 import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 import 'package:print_receipt/domain/model/printer_model.dart';
@@ -14,7 +16,7 @@ class ReceiptController extends ChangeNotifier {
   Future<void> initPrinters() async {
     _printers = await scanPrinters();
     _printer = _printers.firstWhere(
-      (printer) => printer.deviceName == 'EPSON TM-T20 Receipt',
+      (printer) => printer.deviceName == '',
     );
     notifyListeners();
   }
@@ -34,9 +36,9 @@ class ReceiptController extends ChangeNotifier {
       );
 
       await printBytes(
-        qtd: 1, // Número de cópias
+        qtd: 1,
         printerManager: printerManager,
-        bytes: await generateBytesToPrint(), // Bytes gerados para impressão
+        bytes: await generateBytesToPrint(),
         printer: _printer!,
       );
     }
@@ -49,28 +51,25 @@ class ReceiptController extends ChangeNotifier {
     final generator = Generator(PaperSize.mm80, profile);
     bytes += generator.setGlobalCodeTable('CP1252');
     bytes += generator.reset();
-    bytes += generator.text("PEDIDO ", //& NUMERO PEDIDO
-        styles: const PosStyles(height: PosTextSize.size2, width: PosTextSize.size2, fontType: PosFontType.fontA, align: PosAlign.center));
+    bytes += generator.text("PEDIDO ",
+        styles: const PosStyles(
+            height: PosTextSize.size2, width: PosTextSize.size2, fontType: PosFontType.fontA, align: PosAlign.center));
 
-    bytes += generator.text('NOME: '); //&NOME CLIENTE
-    bytes += generator.text('TELEFONE: '); //& TELEFONE
+    bytes += generator.text('NOME: ');
+    bytes += generator.text('TELEFONE: ');
 
-    bytes += generator.text("---------------------------DOBRE-AQUI---------------------------", styles: const PosStyles(align: PosAlign.center, fontType: PosFontType.fontA));
+    bytes += generator.text("---------------------------DOBRE-AQUI---------------------------",
+        styles: const PosStyles(align: PosAlign.center, fontType: PosFontType.fontA));
 
     // Print image
-    //final ByteData data = await rootBundle.load('assets/logo.png');
-    //final Uint8List bytes = data.buffer.asUint8List();
-    //final Image image = decodeImage(bytes);
-    //printer.image(image);
+
     // Print image using alternative commands
-    // printer.imageRaster(image);
-    // printer.imageRaster(image, imageFn: PosImageFn.graphics);
 
     // Print barcode
-    ///final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
-    //printer.barcode(Barcode.upcA(barData));]
 
-    bytes += generator.text('GROCERYLY', styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size2, width: PosTextSize.size2), linesAfter: 1);
+    bytes += generator.text('GROCERYLY',
+        styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size2, width: PosTextSize.size2),
+        linesAfter: 1);
 
     bytes += generator.text('889  Watson Lane', styles: const PosStyles(align: PosAlign.center));
     bytes += generator.text('New Braunfels, TX', styles: const PosStyles(align: PosAlign.center));
@@ -118,7 +117,10 @@ class ReceiptController extends ChangeNotifier {
 
     bytes += generator.row([
       PosColumn(text: 'TOTAL', width: 6, styles: const PosStyles(height: PosTextSize.size2, width: PosTextSize.size2)),
-      PosColumn(text: '\$10.97', width: 6, styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size2, width: PosTextSize.size2)),
+      PosColumn(
+          text: '\$10.97',
+          width: 6,
+          styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size2, width: PosTextSize.size2)),
     ]);
 
     bytes += generator.hr(ch: '=', linesAfter: 1);
@@ -163,7 +165,8 @@ class ReceiptController extends ChangeNotifier {
     }
   }
 
-  Future<List<PrinterModel>> scanPrinters({PrinterType defaultPrinterType = PrinterType.usb, bool isBle = false}) async {
+  Future<List<PrinterModel>> scanPrinters(
+      {PrinterType defaultPrinterType = PrinterType.usb, bool isBle = false}) async {
     final printerManager = PrinterManager.instance;
     final discoveredDevices = <PrinterModel>[];
     final completer = Completer<List<PrinterModel>>();
